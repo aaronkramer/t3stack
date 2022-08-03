@@ -18,4 +18,9 @@ export const exampleRouter = createRouter()
     async resolve({ ctx }) {
       return await ctx.prisma.example.findMany();
     },
-  });
+  })
+  .query('Sample', {
+    async resolve({ ctx }) {
+      return await ctx.prisma.user.findMany();
+    }
+  })
