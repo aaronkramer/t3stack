@@ -1,22 +1,22 @@
 import type { NextPage } from "next";
 import Head from "next/head";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { trpc } from "../utils/trpc";
 import { v4 as uuidv4 } from 'uuid';
 
 
-const ItemList: React.FC<{ id: number, itemData: {text: string} }> = ({ id, itemData }) => {
+const ItemList: React.FC<{ id: number, itemData: { text: string } }> = ({ id, itemData }) => {
   return (
     <li className="m-2">
       <div className="flex flex-row">
         <p className="flex-1">{itemData.text}</p>
         <p className="justify-end rounded bg-green-200 hover:bg-green-300 w-50px">Edit</p>
         <input type='button' className="ml-2 justify-end rounded bg-red-200 hover:bg-red-300 w-50px" value='Delete'
-        onClick={() => {
-          
-        }
+          onClick={() => {
 
-        }
+          }
+
+          }
         />
       </div>
     </li>
@@ -33,6 +33,37 @@ const itemsArr = ["Item 1", "Item 2"]
 const Home: NextPage = () => {
   const [items, setItems] = useState(todoMap)
   const [taskText, setTaskText] = useState('')
+  useEffect(() => {
+    console.log(`Updates ${items}`)
+    setItems(items)
+  }, [items])
+  const pressedKeys: string[] = []
+  const renderLists = () => {
+    return (
+
+      [...items].map((item) => {
+        const itemData = item[1]
+      const id = item[0]
+      return (
+        <li className="m-2">
+          <div className="flex flex-row content-between">
+            <p className="flex-1">{itemData.text}</p>
+            <p className="px-2 py-0.5 justify-end rounded bg-green-200 hover:bg-green-300 w-50px">Edit</p>
+            <input type='button' className="px-2 py-0.5 ml-2 justify-end rounded bg-red-200 hover:bg-red-300 w-50px" value='Delete'
+              onClick={() => {
+                console.log(`delete ${id}`)
+                items.delete(id)
+                console.log(items)
+                setItems(items)
+              }
+            }
+            />
+          </div>
+        </li>
+      )
+    })
+    )
+  }
 
   // const hello = trpc.useQuery(["example.hello"]);
   // items.push('Item 3')
@@ -48,9 +79,10 @@ const Home: NextPage = () => {
         <h1>
           Todo List
         </h1>
-        <div>
-          <input className="border border-black focus:bg-blue-100"
+        <div className="flex flex-row">
+          <textarea className="h-auto w-[250px] border border-black focus:bg-blue-100"
             value={taskText}
+            rows={1}
             onChange={
               (event) => {
                 setTaskText(event.target.value)
@@ -58,35 +90,65 @@ const Home: NextPage = () => {
             }
             onKeyDown={
               (event) => {
-                if (event.key === 'Enter') {
-                  todoMap.set(uuidv4(), {text: taskText})
+                if (!pressedKeys.includes(event.key)) { pressedKeys.push(event.key) }
+                if (pressedKeys.includes('Enter') && pressedKeys.includes('Shift')) { }
+                else if (pressedKeys.includes('Enter')) {
+                  todoMap.set(uuidv4(), { text: taskText })
                   setItems(todoMap)
-                  console.log(todoMap)
                   setTaskText('')
-
-                } else if (event.key === 'Escape') {
+                  if (!pressedKeys.includes('Control')) {
+                    event.currentTarget.blur()
+                    pressedKeys.length = 0
+                  }
+                } else if (pressedKeys.includes('Escape')) {
                   setTaskText('')
                   event.currentTarget.blur()
+                  pressedKeys.length = 0
                 }
+              }
+            }
+            onKeyUp={
+              (event) => {
+                const index = pressedKeys.indexOf(event.key)
+                if (index != -1) { pressedKeys.splice(index) }
               }
             }
           />
           <input className="ml-2 px-2 py-1 border border-black bg-blue-200 hover:bg-blue-500" type="button" value="Input Text" onClick={
             () => {
-              todoMap.set(uuidv4(), {text: taskText})
-              setItems(todoMap)
-              setTaskText('')
+              if (taskText) {
+                items.set(uuidv4(), { text: taskText })
+                setItems(items)
+                setTaskText('')
+              }
             }
           } />
         </div>
-        <div className="w-max">
+        <div className="pl-4 w-[100%]">
           This section is for the todolist
-          <ul className="list-disc">
-            {[...items].map((item) => {
+          <ul className="list-disc w-[100%]">
+            {renderLists()}
+            {/* {[...items].map((item) => {
+              const itemData = item[1]
+              const id = item[0]
               return (
-                <ItemList id={item[0]} itemData={item[1]}></ItemList>
+                <li className="m-2">
+                  <div className="flex flex-row content-between">
+                    <p className="flex-1">{itemData.text}</p>
+                    <p className="px-2 py-0.5 justify-end rounded bg-green-200 hover:bg-green-300 w-50px">Edit</p>
+                    <input type='button' className="px-2 py-0.5 ml-2 justify-end rounded bg-red-200 hover:bg-red-300 w-50px" value='Delete'
+                      onClick={() => {
+                        console.log(`delete ${id}`)
+                        items.delete(id)
+                        console.log(items)
+                        setItems(items)
+                      }
+                      }
+                    />
+                  </div>
+                </li>
               )
-            })}
+            })} */}
           </ul>
         </div>
       </div>
