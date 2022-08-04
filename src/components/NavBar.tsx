@@ -20,6 +20,7 @@ const NavBar: React.FC = () => {
       <a href="/">Options</a>
       <a href="/">Settings</a>
       <a href="/">Profile</a>
+      <a href="/api-tests">API</a>
       </div>
     </>
   );

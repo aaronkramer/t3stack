@@ -6,7 +6,7 @@ import { v4 as uuidv4 } from 'uuid';
 import Navbar from "../components/NavBar";
 
 const todoMap = new Map<number, { text: string }>([
-  [1, { text: "Item 1",  }],
+  [1, { text: "Item 1", }],
   [2, { text: "Item 2", }],
 ])
 
@@ -25,61 +25,6 @@ const Home: NextPage = () => {
     setisUpdated(false)
   }, [isUpdated, ref])
   const pressedKeys: string[] = []
-  const renderLists = () => {
-    return (
-      [...items].map((item) => {
-        
-        const itemData = item[1]
-        const id = item[0]
-        return (
-          <li id={id} className="m-2">
-            <div className="flex flex-row content-between">
-              {editableItem===id? 
-              <input className="flex-1 whitespace-pre-line focus:bg-blue-100" 
-              value={items.get(id).text} 
-              onChange={(event) => {
-                const newItem = items.get(id) 
-                if (newItem) {
-                  newItem.text = event.target.value
-                  items.set(id, newItem)
-                  setItems(items)
-                  setisUpdated(true)
-
-                  // event.target.value = newItem.text
-                }
-              }}
-            
-              autoFocus={true}
-              // TODO: Add onChange event to update the text
-              // TODO update items
-              // TODO: Add onBlur event to update the text
-              />
-              : <p className="flex-1 whitespace-pre-line">{itemData.text}</p>
-            } 
-              <input type='button' className="px-2 py-0.5 ml-2 justify-end rounded  bg-green-200 hover:bg-green-300 w-50px" value="Edit"
-                onClick={() => {
-                  setEditableItem(id)
-                  setisUpdated(true)
-                  }
-                }
-              />
-              <input type='button' className="px-2 py-0.5 ml-2 justify-end rounded bg-red-200 hover:bg-red-300 w-50px" value='Delete'
-                onClick={() => {
-                  items.delete(id)
-                  setItems(items)
-                  setisUpdated(true)
-                }
-                }
-              />
-            </div>
-          </li>
-        )
-      })
-    )
-  }
-
-  // const hello = trpc.useQuery(["example.hello"]);
-  // items.push('Item 3')
 
   return (
     <>
@@ -131,7 +76,7 @@ const Home: NextPage = () => {
           <input className="ml-2 px-2 py-1 border border-black bg-blue-200 hover:bg-blue-500" type="button" value="Input Text" onClick={
             () => {
               if (taskText) {
-                items.set(uuidv4(), { text: taskText})
+                items.set(uuidv4(), { text: taskText })
                 setItems(items)
                 setTaskText('')
               }
@@ -141,28 +86,45 @@ const Home: NextPage = () => {
         <div className="pl-4 w-[100%]">
           This section is for the todolist
           <ul className="list-disc w-[100%]">
-            {renderLists()}
-            {/* {[...items].map((item) => {
-              const itemData = item[1]
-              const id = item[0]
-              return (
-                <li className="m-2">
-                  <div className="flex flex-row content-between">
-                    <p className="flex-1">{itemData.text}</p>
-                    <p className="px-2 py-0.5 justify-end rounded bg-green-200 hover:bg-green-300 w-50px">Edit</p>
-                    <input type='button' className="px-2 py-0.5 ml-2 justify-end rounded bg-red-200 hover:bg-red-300 w-50px" value='Delete'
-                      onClick={() => {
-                        console.log(`delete ${id}`)
-                        items.delete(id)
-                        console.log(items)
-                        setItems(items)
+            {
+              [...items].map((item) => {
+
+                const itemData = item[1]
+                const id = item[0]
+                return (
+                  <li id={id} className="m-2">
+                    <div className="flex flex-row content-between">
+                      {editableItem === id ?
+                        <input className="flex-1 whitespace-pre-line focus:bg-blue-100"
+                          value={items.get(id).text}
+                          onChange={(event) => {
+                            const newItem = items.get(id)
+                            if (newItem) {
+                              newItem.text = event.target.value
+                              items.set(id, newItem)
+                              setItems(items)
+                              setisUpdated(true)
+                            }}}
+                          autoFocus={true}
+                        />
+                        : <p className="flex-1 whitespace-pre-line">{itemData.text}</p>
                       }
-                      }
-                    />
-                  </div>
-                </li>
-              )
-            })} */}
+                      <input type='button' className="px-2 py-0.5 ml-2 justify-end rounded  bg-green-200 hover:bg-green-300 w-50px" value="Edit"
+                        onClick={() => {
+                          setEditableItem(id)
+                          setisUpdated(true)
+                        }}
+                      />
+                      <input type='button' className="px-2 py-0.5 ml-2 justify-end rounded bg-red-200 hover:bg-red-300 w-50px" value='Delete'
+                        onClick={() => {
+                          items.delete(id)
+                          setItems(items)
+                          setisUpdated(true)
+                        }}
+                      />
+                    </div>
+                  </li>
+                )})}
           </ul>
         </div>
       </div>

@@ -1,11 +1,14 @@
+import { useState } from 'react';
 import type { NextPage } from "next";
 import Head from "next/head";
 import Navbar from "../components/NavBar";
 import { trpc } from "../utils/trpc";
 
 const Home: NextPage = () => {
-  const hello = trpc.useQuery(["example.Sample"]);
-    console.log(hello.data)
+    // const hello = trpc.useQuery(["example.Sample"]);
+    // const user = trpc.useQuery(['user.getByEmail'])
+    // TODO add query to hook, see github.com/trpc/examples-next-prisma-starter/blob/main/src/pages/index.tsx
+    const [emailVal, setEmailVal] = useState('')
     return (
         <>
             <Head>
@@ -17,7 +20,20 @@ const Home: NextPage = () => {
             <h1 className='pt-2 w-[700px] justify-center items-center mx-auto text-center text-2xl	'>
                 Api Stuff
             </h1>
-            <p>{JSON.stringify(hello.data)}</p>
+            {/* <div className="border-l-2 border-blue border-solid mx-[20%]"> */}
+            {/* <p className="ml-2 whitespace-pre-wrap" >{JSON.stringify(hello.data,null, 4)}</p> */}
+            {/* </div> */}
+            <div className="border-blue border-solid mx-[20%]">
+                <input className="border-solid border-2 border-blue rounded-md"
+                    onChange={(event) => {
+                        setEmailVal(event.target.value)
+                    }}
+                />
+                <input className="ml-2" type="button" value="Submit"
+                    onClick={() => {
+                        console.log(user.data)
+                    }} />
+            </div>
         </>
     );
 };
