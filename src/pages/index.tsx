@@ -3,11 +3,15 @@ import Head from "next/head";
 import { useEffect, useRef, useState } from "react";
 import { trpc } from "../utils/trpc";
 import { v4 as uuidv4 } from 'uuid';
+import styles from './index.module.css'
+
+import { Button, DropdownButton, Dropdown, Card, ListGroup, Stack, FloatingLabel, Form } from 'react-bootstrap';
+
 import Navbar from "../components/NavBar";
 
-const todoMap = new Map<number, { text: string }>([
-  [1, { text: "Item 1", }],
-  [2, { text: "Item 2", }],
+const todoMap = new Map<string, { text: string }>([
+  ["1", { text: "Item 1", }],
+  ["2", { text: "Item 2", }],
 ])
 
 const itemsArr = ["Item 1", "Item 2"]
@@ -34,99 +38,102 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Navbar />
-      <div className="w-[700px] flex flex-col items-center justify-center w-700 mx-auto ">
+
+      <div className={styles.index}>
         <h1>
           Todo List
         </h1>
-        <div className="flex flex-row">
-          <textarea className="h-auto w-[250px] border border-black focus:bg-blue-100"
-            value={taskText}
-            rows={1}
-            onChange={
-              (event) => {
-                setTaskText(event.target.value)
+        <Form>
+          <Stack direction="horizontal" className={styles.inputCard}>
+
+            <FloatingLabel
+              className={styles.inputField}
+              label="New Todo Item"
+              value={taskText}
+              rows={1}
+              onChange={
+                (event) => {
+                  setTaskText(event.target.value)
+                }
               }
-            }
-            onKeyDown={
-              (event) => {
-                if (!pressedKeys.includes(event.key)) { pressedKeys.push(event.key) }
-                if (pressedKeys.includes('Enter') && pressedKeys.includes('Shift')) { }
-                else if (pressedKeys.includes('Enter')) {
-                  todoMap.set(uuidv4(), { text: taskText })
-                  setItems(todoMap)
-                  setTaskText('')
-                  if (!pressedKeys.includes('Control')) {
+              onKeyDown={
+                (event) => {
+                  if (!pressedKeys.includes(event.key)) { pressedKeys.push(event.key) }
+                  if (pressedKeys.includes('Enter') && pressedKeys.includes('Shift')) { }
+                  else if (pressedKeys.includes('Enter')) {
+                    todoMap.set(uuidv4(), { text: taskText })
+                    setItems(todoMap)
+                    setTaskText('')
+                    if (!pressedKeys.includes('Control')) {
+                      event.currentTarget.blur()
+                      pressedKeys.length = 0
+                    }
+                  } else if (pressedKeys.includes('Escape')) {
+                    setTaskText('')
                     event.currentTarget.blur()
                     pressedKeys.length = 0
                   }
-                } else if (pressedKeys.includes('Escape')) {
-                  setTaskText('')
-                  event.currentTarget.blur()
-                  pressedKeys.length = 0
                 }
               }
-            }
-            onKeyUp={
-              (event) => {
-                const index = pressedKeys.indexOf(event.key)
-                if (index != -1) { pressedKeys.splice(index) }
+              onKeyUp={
+                (event) => {
+                  const index = pressedKeys.indexOf(event.key)
+                  if (index != -1) { pressedKeys.splice(index) }
+                }
               }
-            }
-          />
-          <input className="ml-2 px-2 py-1 border border-black bg-blue-200 hover:bg-blue-500" type="button" value="Input Text" onClick={
-            () => {
-              if (taskText) {
-                items.set(uuidv4(), { text: taskText })
-                setItems(items)
-                setTaskText('')
-              }
-            }
-          } />
-        </div>
-        <div className="pl-4 w-[100%]">
-          This section is for the todolist
-          <ul className="list-disc w-[100%]">
-            {
-              [...items].map((item) => {
+            >
+              <Form.Control type="inputText" placeholder="New Guy" />
+            </FloatingLabel>
+            <Button variant="primary"
+              className="ms-auto"
+              type="submit"
+              onClick={
+                () => {
+                  if (taskText) {
+                    items.set(uuidv4(), { text: taskText })
+                    setItems(items)
+                    setTaskText('')
+                  }
+                }
+              }>Add Item</Button>
+          </Stack>
+        </Form>
+        <Card className={styles.spacer}>
+          {[...items].map((item) => {
 
-                const itemData = item[1]
-                const id = item[0]
-                return (
-                  <li id={id} className="m-2">
-                    <div className="flex flex-row content-between">
-                      {editableItem === id ?
-                        <input className="flex-1 whitespace-pre-line focus:bg-blue-100"
-                          value={items.get(id).text}
-                          onChange={(event) => {
-                            const newItem = items.get(id)
-                            if (newItem) {
-                              newItem.text = event.target.value
-                              items.set(id, newItem)
-                              setItems(items)
-                              setisUpdated(true)
-                            }}}
-                          autoFocus={true}
-                        />
-                        : <p className="flex-1 whitespace-pre-line">{itemData.text}</p>
-                      }
-                      <input type='button' className="px-2 py-0.5 ml-2 justify-end rounded  bg-green-200 hover:bg-green-300 w-50px" value="Edit"
-                        onClick={() => {
+            const itemData = item[1]
+            const id = item[0]
+            return (
+              <ListGroup>
+                <ListGroup.Item id={id} >
+                  <Stack direction="horizontal" >
+                    {itemData.text}
+                    <DropdownButton
+                      className="ms-auto"
+                      title=""
+                      onSelect={(eventKey) => {
+                        if (eventKey === "edit") {
                           setEditableItem(id)
                           setisUpdated(true)
-                        }}
-                      />
-                      <input type='button' className="px-2 py-0.5 ml-2 justify-end rounded bg-red-200 hover:bg-red-300 w-50px" value='Delete'
-                        onClick={() => {
+                        }
+                        else if (eventKey === "delete") {
                           items.delete(id)
                           setItems(items)
                           setisUpdated(true)
-                        }}
-                      />
-                    </div>
-                  </li>
-                )})}
-          </ul>
-        </div>
+                        }
+                      }
+                      }
+                    >
+                      <Dropdown.Item eventKey="edit">Edit</Dropdown.Item>
+                      <Dropdown.Item eventKey="delete">Delete</Dropdown.Item>
+                    </DropdownButton>
+                  </Stack >
+                </ListGroup.Item>
+              </ListGroup>
+            )
+          })
+          }
+        </Card>
       </div>
     </>
   );

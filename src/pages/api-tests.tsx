@@ -1,14 +1,34 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { NextPage } from "next";
 import Head from "next/head";
 import Navbar from "../components/NavBar";
 import { trpc } from "../utils/trpc";
+import { z } from "zod";
 
 const Home: NextPage = () => {
     // const hello = trpc.useQuery(["example.Sample"]);
     // const user = trpc.useQuery(['user.getByEmail'])
     // TODO add query to hook, see github.com/trpc/examples-next-prisma-starter/blob/main/src/pages/index.tsx
+    const utils = trpc.useContext()
     const [emailVal, setEmailVal] = useState('')
+    const [submit, setSubmit] = useState(false)
+    const { isLoading, data: userData, refetch, isError, error: userError } = trpc.useQuery(
+        ['user.getByEmail', { data: { email: emailVal } }],
+        { enabled: false, retry: false },
+    )
+
+    const handleSubmit = () => {
+        refetch()
+        console.log(userData)
+    }
+    // useEffect(() => {
+    //     if (submit) {
+    //         // utils.invalidateQueries['user.getByEmail2']
+    //         setSubmit(false)
+    //     }
+    //     else {}
+    // }, [submit])
+
     return (
         <>
             <Head>
@@ -31,8 +51,13 @@ const Home: NextPage = () => {
                 />
                 <input className="ml-2" type="button" value="Submit"
                     onClick={() => {
-                        console.log(user.data)
+                        // setSubmit(true)
+                        handleSubmit()
                     }} />
+            </div>
+            <div className="border-l-2 border-blue border-solid mx-[20%]">
+                {isLoading && <p>Loading...</p>}
+                {userData && <p className="ml-2 whitespace-pre-wrap" >{JSON.stringify(userData, null, 4)}</p>}
             </div>
         </>
     );

@@ -1,27 +1,33 @@
 import type { NextPage } from "next";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
+import { Container, Row, Col, Nav, Navbar } from "react-bootstrap";
 import { trpc } from "../utils/trpc";
+import styles from "./NavBar.module.css"
 
-const NavButton: React.FC = () => {
-  return (
-    <>
-        <a href="/">Here</a>
-    </>
-  )
-}
-
+const pages = [
+  { name: "Home", link: "/" },
+  { name: "About", link: "/about" },
+  { name: "Contact", link: "/contact" },
+  { name: "Register", link: "/register" },
+  { name: "Dashboard", link: "/dashboard" },
+  { name: "API", link: "/api-tests" },
+]
 
 const NavBar: React.FC = () => {
   return (
     <>
-      <div className='px-[25%] h-10 bg-slate-500 text-white text-xl pt-1 text-center flex flex-row place-content-between	'>
-      <a href="/">Home</a>
-      <a href="/history">History</a>
-      <a href="/">Options</a>
-      <a href="/">Settings</a>
-      <a href="/">Profile</a>
-      <a href="/api-tests">API</a>
-      </div>
+      <Container className={styles.inline}>
+        <Navbar variant="light" bg="light">
+          <Navbar.Brand href="/">Aaron's Thing <img /></Navbar.Brand>
+          <Container>
+            {pages.map((page) => {
+              return (
+                <Nav.Link href={page.link}>{page.name}</Nav.Link>
+              )
+            })}
+          </Container>
+        </Navbar>
+      </Container>
     </>
   );
 };

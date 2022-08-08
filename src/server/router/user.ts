@@ -2,24 +2,32 @@ import { createRouter } from "./context";
 import { z } from "zod";
 import { TRPCError } from '@trpc/server'
 
-
 export const userRouter = createRouter()
   .query("getByEmail", {
     input: z.object({
-      email: z.string().email()
+      data: z.object({
+        email: z.string().email()
+      }).optional()
     }),
     async resolve({ input, ctx }) {
-      const { email } = input
-      const user = await ctx.prisma.user.findFirst({
+      if (!input.data?.email) {
+        throw new TRPCError({
+          code: 'BAD_REQUEST',
+          message: 'Email is required'
+        })
+      }
+      const { data } = input
+      const userData = await ctx.prisma.user.findFirst({
         where: {
-          email: email
+          email: data?.email
         }
       })
-      if (!user) {
+      if (!userData) {
         throw new TRPCError({
           code: 'NOT_FOUND',
-          message: `No user with email '${email}'`,
+          message: `No user with email '${data.email}'`,
         });
       }
+      return userData
     }
   })

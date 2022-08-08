@@ -1,0 +1,27 @@
+.todoCard {
+    /* margin-left: 1rem; */
+    align-self: right;
+}
+
+.index {
+    /* display: flex;
+    flex-direction: column;
+    justify-content: space-between; */
+    text-align: center;
+    margin-left: 10rem;
+    margin-right: 10rem;
+    margin-bottom: 1rem;
+}
+
+.inputCard {
+    /* justify-content: center; */
+}
+
+.inputField {
+    width: 90%;
+    /* margin-right: 2rem; */
+}
+
+.spacer {
+    margin-top: 1rem;
+}
