@@ -7,6 +7,13 @@ import { SessionProvider } from "next-auth/react";
 import "../styles/globals.css";
 import 'bootstrap/dist/css/bootstrap.min.css';
 
+
+import "primereact/resources/themes/lara-light-indigo/theme.css";  //theme
+import "primereact/resources/primereact.min.css";                  //core css
+import "primeicons/primeicons.css";                                //icons
+ 
+
+
 const MyApp: AppType = ({
   Component,
   pageProps: { session, ...pageProps },

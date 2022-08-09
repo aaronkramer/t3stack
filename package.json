@@ -13,6 +13,8 @@
     "postinstall": "prisma generate"
   },
   "dependencies": {
+    "@emotion/react": "^11.10.0",
+    "@emotion/styled": "^11.10.0",
     "@mui/types": "^7.1.5",
     "@next-auth/prisma-adapter": "^1.0.3",
     "@prisma/client": "^3.15.2",
@@ -22,8 +24,12 @@
     "@trpc/server": "^9.25.3",
     "@types/bootstrap": "^5.2.1",
     "bootstrap": "^5.2.0",
+    "framer-motion": "^6.5.1",
     "next": "^12.1.6",
     "next-auth": "^4.6.1",
+    "primeflex": "^3.2.1",
+    "primeicons": "^5.0.0",
+    "primereact": "^8.3.0",
     "react": "18.2.0",
     "react-bootstrap": "^2.5.0",
     "react-dom": "18.2.0",
@@ -45,8 +51,5 @@
     "tailwindcss": "^3.1.4",
     "ts-node": "^10.9.1",
     "typescript": "^4.7.4"
-  },
-  "overrides": {
-    "autoprefixer": "10.4.5"
   }
 }
