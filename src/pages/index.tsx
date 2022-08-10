@@ -1,23 +1,45 @@
 import type { NextPage } from "next";
 import Head from "next/head";
-import { useEffect, useRef, useState } from "react";
+import { JSXElementConstructor, ReactElement, ReactFragment, ReactPortal, useEffect, useRef, useState } from "react";
 import { trpc } from "../utils/trpc";
 import { v4 as uuidv4 } from 'uuid';
 import styles from './index.module.css'
 
 import { TreeSelect } from 'primereact/treeselect';
 import { Button } from 'primereact/button';
+import { Accordion, AccordionTab } from 'primereact/accordion';
+import { InputText } from 'primereact/inputtext';
 
 import { InputTextarea } from 'primereact/inputtextarea';
 
 import Navbar from "../components/NavBar";
+import { getDefaultState } from "react-query/types/core/mutation";
+
+const sampleSet = [
+  {
+    id: 1,
+    title: "Item 1",
+    description: "Description 1",
+    user: "Aaron",
+    reported: "2021-01-01",
+  },
+  {
+    id: 2,
+    title: "Item 2",
+    description: "Description 2",
+    user: "Aaron",
+    reported: "2021-03-01",
+  },
+]
+
+
 
 const Home: NextPage = () => {
-  // const [taskText, setTaskText] = useState('')
+  const [taskText, setTaskText] = useState('')
+  const [activeIndex, setActiveIndex] = useState(-1)
   const [value, setValue] = useState('');
-
+  const { data, isLoading, isFetching } = trpc.useQuery(['task.getAll'], { retry: false })
   const pressedKeys: string[] = []
-
   const handleInputKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (!pressedKeys.includes(event.key)) { pressedKeys.push(event.key) }
     if (pressedKeys.includes('Enter') && pressedKeys.includes('Shift')) { }
@@ -36,10 +58,11 @@ const Home: NextPage = () => {
     }
   }
   const handleSubmit = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-    self.alert(value)
-    console.log(value)
+    // self.alert(value)
+    data ? console.log(data) : null
+    isLoading ? console.log("Loading...") : null
+    isFetching ? console.log("Fetching...") : null
   }
-
 
   return (
     <>
@@ -50,17 +73,37 @@ const Home: NextPage = () => {
       </Head>
       <div className='grid place-items-center'>
 
-      <Navbar />
+        <Navbar />
 
-      <div className='grid place-items-center w-[70%]'>
-        <h1 className="">
-          Todo List
-        </h1>
-        <div className='w-[100%]' /*'w-[100%] flex flex-row justify-between'*/>
-        <InputTextarea className='top-1' value={value} onChange={(e) => setValue(e.target.value)} onKeyDown={(e) => handleInputKeyDown(e)} rows={1} cols={55} autoResize />
-        <Button className='top-0' onClick={(e) => handleSubmit(e)} >Press Me!</Button>
+        <div className='grid place-items-center w-[70%]'>
+          <h1 className="">
+            Todo List
+          </h1>
+          <div className='w-[100%]' /*'w-[100%] flex flex-row justify-between'*/>
+            <InputTextarea value={value} onChange={(e) => setValue(e.target.value)} onKeyDown={(e) => handleInputKeyDown(e)} rows={1} cols={55} autoResize />
+            <Button onClick={(e) => handleSubmit(e)} >Press Me!</Button>
+          </div>
+          <Accordion activeIndex={activeIndex} onTabChange={(e) => setActiveIndex(e.index)}>
+            {
+              data ?
+                data.map((item: { name: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | ReactFragment | ReactPortal | null | undefined; userId: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | ReactFragment | ReactPortal | null | undefined; description: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | ReactFragment | ReactPortal | null | undefined; date: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | ReactFragment | ReactPortal | null | undefined; }) => {
+                  return (
+                    <AccordionTab header={
+                      <div>
+                        <p>{item.name}</p>
+                        <p>{item.userId}</p>
+                      </div>
+                    }>
+                      {item.description}
+                      {item.date}
+                    </AccordionTab>
+                  )
+                })
+                : null
+            }
+          </Accordion>
+
         </div>
-      </div>
       </div>
     </>
   );

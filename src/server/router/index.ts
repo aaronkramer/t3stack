@@ -4,11 +4,13 @@ import superjson from "superjson";
 
 import { exampleRouter } from "./example";
 import { userRouter } from "./user";
+import { taskRouter } from "./task";
 
 export const appRouter = createRouter()
   .transformer(superjson)
   // .merge("example.", exampleRouter)
   .merge("user.", userRouter)
+  .merge("task.", taskRouter)
 
 // export type definition of API
 export type AppRouter = typeof appRouter;

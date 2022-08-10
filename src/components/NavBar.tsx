@@ -1,33 +1,25 @@
 import type { NextPage } from "next";
 import React, { useRef, useState } from "react";
-import { Container, Row, Col, Nav, Navbar } from "react-bootstrap";
+// import { Container, Row, Col, Nav, Navbar } from "react-bootstrap";
 import { trpc } from "../utils/trpc";
-import styles from "./NavBar.module.css"
+import { Menubar } from 'primereact/menubar';
 
 const pages = [
-  { name: "Home", link: "/" },
-  { name: "About", link: "/about" },
-  { name: "Contact", link: "/contact" },
-  { name: "Register", link: "/register" },
-  { name: "Dashboard", link: "/dashboard" },
-  { name: "API", link: "/api-tests" },
+  { label: "Home", url: "/" },
+  { label: "About", url: "/about" },
+  { label: "Contact", url: "/contact" },
+  { label: "Register", url: "/register" },
+  { label: "Dashboard", url: "/dashboard" },
+  { label: "API", url: "/api-tests" },
 ]
 
 const NavBar: React.FC = () => {
   return (
     <>
-      <Container className={styles.inline}>
-        <Navbar variant="light" bg="light">
-          <Navbar.Brand href="/">Aaron's Thing <img /></Navbar.Brand>
-          <Container>
-            {pages.map((page) => {
-              return (
-                <Nav.Link href={page.link}>{page.name}</Nav.Link>
-              )
-            })}
-          </Container>
-        </Navbar>
-      </Container>
+    <Menubar 
+    model={pages}
+    start={<h1><a href='/'>Logo</a></h1>}
+    />
     </>
   );
 };
