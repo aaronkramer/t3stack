@@ -31,3 +31,16 @@ export const userRouter = createRouter()
       return userData
     }
   })
+  .mutation("create", {
+    input: z
+      .object({
+        email: z.string().email(),
+      }),
+    async resolve({ input, ctx }) {
+      const user = await ctx.prisma.user.create({
+        data: {
+          email: input.email
+        }
+      })
+    }
+  })
