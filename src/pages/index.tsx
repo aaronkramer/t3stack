@@ -4,6 +4,8 @@ import { JSXElementConstructor, ReactElement, ReactFragment, ReactPortal, useEff
 import { trpc } from "../utils/trpc";
 import { v4 as uuidv4 } from 'uuid';
 import styles from './index.module.css'
+import { useSession, signIn, signOut } from "next-auth/react";
+import { getToken } from "next-auth/jwt"
 
 import { TreeSelect } from 'primereact/treeselect';
 import { Button } from 'primereact/button';
@@ -35,6 +37,10 @@ const sampleSet = [
 
 
 const Home: NextPage = () => {
+  const { data: session } = useSession()
+  console.log(session)
+  const token = getToken()
+  console.log(token)
   const [taskText, setTaskText] = useState('')
   const [activeIndex, setActiveIndex] = useState(-1)
   const [value, setValue] = useState('');

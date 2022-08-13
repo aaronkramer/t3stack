@@ -3,7 +3,7 @@ import { withTRPC } from "@trpc/next";
 import type { AppRouter } from "../server/router";
 import type { AppType } from "next/dist/shared/lib/utils";
 import superjson from "superjson";
-import { SessionProvider } from "next-auth/react";
+import { SessionProvider, useSession } from "next-auth/react";
 import "../styles/globals.css";
 import 'bootstrap/dist/css/bootstrap.min.css';
 
@@ -20,10 +20,29 @@ const MyApp: AppType = ({
 }) => {
   return (
     <SessionProvider session={session}>
+      {Component.auth ? (
+      <Auth>
       <Component {...pageProps} />
+      </Auth>
+      ) : (
+        <Component {...pageProps} />
+      )
+    }
     </SessionProvider>
   );
 };
+
+function Auth({ children }) {
+  // if `{ required: true }` is supplied, `status` can only be "loading" or "authenticated"
+  const { status } = useSession({ required: true })
+
+  if (status === "loading") {
+    return <div>Loading...</div>
+  }
+
+  return children
+}
+
 
 const getBaseUrl = () => {
   if (typeof window !== "undefined") {
